@@ -1,18 +1,20 @@
 function createFakeServer() {
   var server = sinon.fakeServer.create();
 
-  var images = storage.all();
+  var drawings = new Storage(localStorage);
 
-  server.respondWith("GET",  new RegExp('/api/images'),all);
-  server.respondWith("GET",  new RegExp('/api/images/(\d+)'),get);
-  server.respondWith("POST", new RegExp('/api/images'),create);
-  server.respondWith("POST", new RegExp('/api/images/(\d+)'),update);
+  server.respondWith("GET",  new RegExp('/api/drawings'),all);
+  server.respondWith("GET",  new RegExp('/api/drawings/(\d+)'),get);
+  server.respondWith("POST", new RegExp('/api/drawings'),create);
+  server.respondWith("POST", new RegExp('/api/drawings/(\d+)'),update);
+
+  server.autoRespond = true;
 
   function all(xhr) {
-    xhr.respond(200,{},images.all());
+    xhr.respond(200,{},drawings.all());
   }
   function get(xhr,id) {
-    var img = images.get(id);
+    var img = drawings.get(id);
     if(!img) xhr.respond(404);
     xhr.respond(200,{},img);
   }
@@ -33,14 +35,15 @@ function Storage(ls) {
 }
 Storage.prototype = {
   all: function() {
-    return Object.keys(this.ls).filter(function(x) {
+    var asJson = Object.keys(this.ls).filter(function(x) {
       return /^image-/.test(x);
     }).map(function(k) {
-      return JSON.parse(this.ls[k]);
+      return this.ls[k];
     },this);
+    return "[" + asJson.join(",") + "]";
   },
   get: function(id) {
-    return JSON.parse(this.ls["image-" + v.id]);
+    return this.ls["image-" + v.id];
   },
   create: function(v) {
     v.id = this.ls.id;

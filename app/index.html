@@ -19,19 +19,12 @@
         <![endif]-->
 
 
-        <nav>
-          <a back-button>Back</a>
-        </nav>
         <section ng-view></section>
 
         <div notifications></div>
-
-        <script id='tpls/index.html' type="text/ng-template">
-          <h1>LittleSketcher v0.1</h1>
-          <p><a href='/drawings/new' class=button>Start a drawing</a></p>
-          <p><a href='/drawings' class=button>List drawings</a></p>
-        </script>
         <script id='tpls/drawings_new.html' type="text/ng-template">
+          <h1>HELLO</h1>
+          <a href="#">Back</a>
           <div class=canvases ng-class="{loading:loading}">
             <canvas drawing commands=record.commands width=320 height=400></canvas>
             <canvas draw onpath=newStroke(command) width=320 height=400></canvas>
@@ -41,15 +34,22 @@
           <button ng-click=redo() ng-disabled="undone.length == 0">Redo</button>
           <button ng-click=save() ng-disabled="saved">{{verb()}}</button>
         </script>
+
+        <script id='tpls/index.html' type="text/ng-template">
+          <h1>LittleSketcher v0.1</h1>
+          <p><a href='#drawings/new' class=button>Start a drawing</a></p>
+          <p><a href='#drawings' class=button>List drawings</a></p>
+        </script>
         <script id='tpls/drawings_list.html' type="text/ng-template">
-          <a class="button small drawing_create" href=/drawings/new>New Drawing</a>
+          <a href="#">Back</a>
+          <a class="button small drawing_create" href='#drawings/new'>New Drawing</a>
           <ul class=drawings>
             <li class=note ng-show='drawings.length == 0'>
               No drawings yet, get drawing!
             </li>
             <li class=drawing ng-repeat="drawing in drawings" >
               <span class=name ng-bind="drawing.name || 'Unamed drawing'"></span>
-              <a ng-href="/drawings/{{drawing._id}}" class="small button">Edit</a>
+              <a ng-href="#drawings/{{drawing._id}}" class="small button">Edit</a>
               <a ng-click="deleteDrawing(drawing)" class="small button alert">Delete</a>
             </li>
           </ul>
@@ -58,6 +58,9 @@
         <!-- Fake backend -->
         <script src="js/support/sinon.js"></script>
         <script src="js/support/fake-server.js"></script>
+        <script>
+          createFakeServer();
+        </script>
 
         <script src="js/vendor/underscore.js"></script>
         <script src="js/vendor/angular/angular.js"></script>
@@ -67,6 +70,7 @@
         <script src="js/routes.js"></script>
         <script src="js/drawing.js"></script>
         <script src="js/back-button.js"></script>
+
 
     </body>
 </html>
