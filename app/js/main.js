@@ -5,7 +5,7 @@ app.controller("rootCtrl",function($scope,$rootScope) {
 
 
 app.controller("drawingCreateCtrl",
-  function($scope,$rootScope,backState,DrawingRecord,$routeParams,errors) {
+  function($scope,$rootScope,DrawingRecord,$routeParams,errors) {
 
   $scope.undone = [];
   $scope.saved = false
@@ -48,7 +48,6 @@ app.controller("drawingCreateCtrl",
     record["$" + verb]().catch(_.partial(errors,"There was a problem saving your drawing!"))
   };
 
-  backState("Home","/");
 });
 
 app.controller("drawingsCtrl",function($scope,DrawingRecord) {

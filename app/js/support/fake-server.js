@@ -19,19 +19,20 @@ function createFakeServer() {
     xhr.respond(200,{},img);
   }
   function create(xhr) {
-    xhr.respond(200,{},img);
+    var drawing = drawings.create(JSON.parse(xhr.requestBody));
+    xhr.respond(200,{},JSON.stringify(drawing));
   }
   function update(xhr,id) {
     var img = image.get(id);
     if(!img) xhr.respond(404);
-    image.update(JSON.parse(xhr.textBody));
+    image.update(JSON.parse(xhr.requestBody));
     xhr.respond(200,{},{});
   }
 }
 
 function Storage(ls) {
   this.ls = ls;
-  this.ls.id = ls.id || 1;
+  this.ls.id = ls.id || 0;
 }
 Storage.prototype = {
   all: function() {
@@ -42,13 +43,16 @@ Storage.prototype = {
     },this);
     return "[" + asJson.join(",") + "]";
   },
+  nextId: function() {
+    var next = parseInt(this.ls.id) + 1;
+    return this.ls.id = next;
+  },
   get: function(id) {
     return this.ls["image-" + v.id];
   },
   create: function(v) {
-    v.id = this.ls.id;
-    this.ls.id += 1;
-    this.ls["image-" + v.id] = JSON.stringify(v);
+    v.id = this.nextId();
+    return this.ls["image-" + v.id] = JSON.stringify(v);
   },
   update: function(u) {
     var img = this.get(u.id)

@@ -12,11 +12,11 @@ app.config(function($routeProvider) {
       controller: "drawingsCtrl"
     })
     .when("/drawings/new",{
-      templateUrl: "tpls/drawing_new.html",
+      templateUrl: "tpls/drawings_new.html",
       controller: "drawingCreateCtrl"
     })
     .when("/drawings/:id",{
-      templateUrl: "tpls/drawing_new.html",
+      templateUrl: "tpls/drawings_new.html",
       controller: "drawingCreateCtrl"
     });
 });
