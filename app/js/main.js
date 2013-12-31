@@ -1,4 +1,4 @@
-var app = angular.module("littleSketcher",["ngRoute","ngResource"]);
+var app = angular.module("littleSketcher",["ngRoute","ngResource","toggleInput"]);
 
 app.controller("rootCtrl",function($scope,$rootScope) {
 });

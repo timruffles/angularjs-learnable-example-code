@@ -47,7 +47,10 @@
               No drawings yet, get drawing!
             </li>
             <li class=drawing ng-repeat="drawing in drawings" >
-              <span class=name ng-bind="drawing.name || 'Unamed drawing'"></span>
+              <div toggle-input>
+                <input toggled-input ng-model=drawing.name placeholder="Unamed drawing">
+                <span toggle-trigger class=name ng-bind="drawing.name || 'Unamed drawing'"></span>
+              </div>
               <a ng-href="#drawings/{{drawing._id}}" class="small button">Edit</a>
               <a ng-click="deleteDrawing(drawing)" class="small button alert">Delete</a>
             </li>
@@ -62,9 +65,13 @@
         </script>
 
         <script src="js/vendor/underscore.js"></script>
+        <script src="js/vendor/jquery.js"></script>
+
         <script src="js/vendor/angular/angular.js"></script>
         <script src="js/vendor/angular/angular-route.js"></script>
         <script src="js/vendor/angular/angular-resource.js"></script>
+
+        <script src="js/toggle_input.js"></script>
         <script src="js/main.js"></script>
         <script src="js/routes.js"></script>
         <script src="js/drawing.js"></script>
