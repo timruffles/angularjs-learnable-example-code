@@ -51,6 +51,7 @@ app.controller("drawingCreateCtrl",
 });
 
 app.controller("drawingsCtrl",function($scope,DrawingRecord) {
+
   $scope.drawings = DrawingRecord.query();
   $scope.deleteDrawing = function(drawing) {
     drawing.$delete()
@@ -60,29 +61,44 @@ app.controller("drawingsCtrl",function($scope,DrawingRecord) {
       })
       .catch(function() {
         $scope.$emit("notify:error","Drawing could not be deleted");
+      });
+  };
+});
+
+app.controller("drawingListItem",function($scope) {
+
+  $scope.$watch("drawing.name",$scope.updateDrawing);
+
+  $scope.updateDrawing = function(drawing) {
+    $scope.drawing.$update()
+      .then(function() {
+        $scope.$emit("notify:completed","Drawing updated");
       })
-  }
+      .catch(function() {
+        $scope.$emit("notify:error","Drawing could not be updated");
+      });
+  };
 });
 
 app.factory("DrawingRecord",function($resource) {
   var Drawing = $resource("/api/drawing/:id",{id: '@_id'},{
     'query':  {method:'GET', isArray:true, url: "/api/drawings"},
     'create':  {method:'POST', url: "/api/drawings"},
-  })
-  Drawing.prototype.$isNew = function() { return this._id == null }
+  });
+  Drawing.prototype.$isNew = function() { return this._id == null };
   return Drawing;
 });
 
 app.factory("errors",function() {
   return function(msg) {
     alert(msg)
-  }
+  };
 })
 
 _.mixin({
   spliceOut: function(arr,obj) {
-    var index = _.indexOf(arr,obj)
-    arr.splice(index,1)
+    var index = _.indexOf(arr,obj);
+    arr.splice(index,1);
   }
 })
 

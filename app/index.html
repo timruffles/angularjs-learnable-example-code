@@ -46,9 +46,11 @@
             <li class=note ng-show='drawings.length == 0'>
               No drawings yet, get drawing!
             </li>
-            <li class=drawing ng-repeat="drawing in drawings" >
+            <li class=drawing ng-repeat="drawing in drawings" ng-controller=drawingListItem>
               <div toggle-input>
-                <input toggled-input ng-model=drawing.name placeholder="Unamed drawing">
+                <form>
+                  <input toggled-input ng-model=drawing.name placeholder="Unamed drawing">
+                </form>
                 <span toggle-trigger class=name ng-bind="drawing.name || 'Unamed drawing'"></span>
               </div>
               <a ng-href="#drawings/{{drawing._id}}" class="small button">Edit</a>
@@ -64,13 +66,16 @@
           createFakeServer();
         </script>
 
+        <!-- general libraries -->
         <script src="js/vendor/underscore.js"></script>
-        <script src="js/vendor/jquery.js"></script>
+        <script src="js/vendor/jquery.js"></script> <!-- jQuery before angular so angular can augment element with it -->
 
+        <!-- angular + modules -->
         <script src="js/vendor/angular/angular.js"></script>
         <script src="js/vendor/angular/angular-route.js"></script>
         <script src="js/vendor/angular/angular-resource.js"></script>
 
+        <!-- our app code - angular's module system isn't a module loader, so order is important -->
         <script src="js/toggle_input.js"></script>
         <script src="js/main.js"></script>
         <script src="js/routes.js"></script>

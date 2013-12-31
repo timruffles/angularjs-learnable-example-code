@@ -9,8 +9,15 @@
         $scope.input = {visible: false};
       },
       link: function(scope,el,attrs) {
-        var original = el;
-        scope.$broadcast("inputDisplayed",false);
+        // bubbled submit events that are not
+        // cancelled will cause input to toggle
+        el.on("submit",function() {
+          if(scope.input.visible) {
+            scope.$apply(function() {
+              scope.input.visible = false;
+            });
+          }
+        });
       }
     };
   });
@@ -19,8 +26,9 @@
       require: "^toggleInput",
       link: function(scope,el,attrs) {
         el.on("click",function() {
-          scope.input.visible = true;
-          scope.$apply();
+          scope.$apply(function() {
+            scope.input.visible = true;
+          });
         });
         scope.$watch("input.visible",function(val) {
           el.toggleClass("off",val);
@@ -36,22 +44,23 @@
         function off() {
           if(handler) $document.off("click",handler);
           handler = false;
-          scope.input.visible = false;
-          scope.$apply();
         };
-        el.on("submit",function() {
-          scope.$emit("toggleInput:commit");
-          off();
-        });
         scope.$watch("input.visible",function(val) {
           el.toggleClass("off",!val);
-          if(!val) return;
-          el[0].focus();
+          if(!val) {
+            off();
+            return;
+          }
+          el.find("input").andSelf().focus();
           // ignore current event
           $timeout(function() {
             $document.on("click",handler = function(event) {
-              if(el.has(event.target).length > 0 || el.is(event.target)) return;
-              off();
+              if(el.has(event.target).length > 0 || el.is(event.target)) {
+                return;
+              }
+              scope.$apply(function() {
+                scope.input.visible = false;
+              });
             });
           });
         });
