@@ -18,10 +18,13 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
+        <div class=row>
 
-        <section ng-view></section>
+          <section ng-view></section>
 
-        <div notifications></div>
+          <div notifications></div>
+
+        </div>
 
         <script id='tpls/index.html' type="text/ng-template">
           <h1>LittleSketcher v0.1</h1>
@@ -36,8 +39,8 @@
           </div>
 
           <button ng-click=undo() ng-disabled="record.commands.length == 0">Undo</button>
-          <button ng-click=redo() ng-disabled="undone.length == 0">Redo</button>
-          <button ng-click=save() ng-disabled="saved">{{verb()}}</button>
+          <button ng-click=redo() ng-disabled="state.undone.length == 0">Redo</button>
+          <p ng-hide=state.synced>Saving your work...</p>
         </script>
         <script id='tpls/drawings_list.html' type="text/ng-template">
           <a href="#">Back</a>

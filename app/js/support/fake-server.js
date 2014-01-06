@@ -1,14 +1,19 @@
 function createFakeServer() {
+  var xhr = sinon.useFakeXMLHttpRequest();
+  xhr.onCreate = console.log.bind(console);
   var server = sinon.fakeServer.create();
 
   var drawings = new Storage(localStorage);
+
 
   server.respondWith("GET",  new RegExp('/api/drawings'),all);
   server.respondWith("GET",  new RegExp('/api/drawings/(\d+)'),get);
   server.respondWith("POST", new RegExp('/api/drawings'),create);
   server.respondWith("POST", new RegExp('/api/drawings/(\d+)'),update);
+  server.respondWith("DELETE", new RegExp('/api/drawing'),remove);
 
   server.autoRespond = true;
+  server.autoRespondAfter = 850;
 
   function all(xhr) {
     xhr.respond(200,{},drawings.all());
@@ -19,14 +24,18 @@ function createFakeServer() {
     xhr.respond(200,{},img);
   }
   function create(xhr) {
-    var drawing = drawings.create(JSON.parse(xhr.requestBody));
-    xhr.respond(200,{},JSON.stringify(drawing));
+    var jsonDrawing = drawings.create(JSON.parse(xhr.requestBody));
+    xhr.respond(200,{},jsonDrawing);
   }
   function update(xhr,id) {
-    var img = image.get(id);
+    var img = drawing.get(id);
     if(!img) xhr.respond(404);
-    image.update(JSON.parse(xhr.requestBody));
+    drawing.update(JSON.parse(xhr.requestBody));
     xhr.respond(200,{},{});
+  }
+  function remove(xhr,drawing) {
+    var resp = drawing.remove(drawing.id) ? 200 : 404;
+    xhr.respond(resp,{},{});
   }
 }
 
@@ -37,7 +46,7 @@ function Storage(ls) {
 Storage.prototype = {
   all: function() {
     var asJson = Object.keys(this.ls).filter(function(x) {
-      return /^image-/.test(x);
+      return /^drawing-/.test(x);
     }).map(function(k) {
       return this.ls[k];
     },this);
@@ -48,18 +57,22 @@ Storage.prototype = {
     return this.ls.id = next;
   },
   get: function(id) {
-    return this.ls["image-" + v.id];
+    return this.ls["drawing-" + v.id];
   },
   create: function(v) {
     v.id = this.nextId();
-    return this.ls["image-" + v.id] = JSON.stringify(v);
+    return this.ls["drawing-" + v.id] = JSON.stringify(v);
   },
   update: function(u) {
     var img = this.get(u.id)
     for(var p in u) {
       img[p] = u[p]
     }
-    this.ls["image-" + u.id] = JSON.stringify(img);
+    this.ls["drawing-" + u.id] = JSON.stringify(img);
+  },
+  remove: function(id) {
+    if(!this.ls["drawing-" + id]) return false;
+    delete this.ls["drawing-" + id];
   }
 }
 

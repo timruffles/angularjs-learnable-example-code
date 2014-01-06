@@ -7,46 +7,61 @@ app.controller("rootCtrl",function($scope,$rootScope) {
 app.controller("drawingCreateCtrl",
   function($scope,$rootScope,DrawingRecord,$routeParams,errors) {
 
-  $scope.undone = [];
-  $scope.saved = false
+  $scope.state = {
+    undone: [],
+    synced: true
+  };
+  var state = $scope.state;
 
   var record = $scope.record = new DrawingRecord();
   if($routeParams.id != null) {
     record._id = $routeParams.id;
-    record.$get()
+    record.$get();
   } else {
-    record.commands = []
+    record.commands = [];
   }
-  $scope.saved = true
 
   $scope.newStroke = function(command) {
-    $scope.saved = false
-    $scope.undone = [];
+    state.synced = false
+    state.undone = [];
     record.commands.push(_.defaults({
       type: "path"
     },command))
+    needsSync();
   };
-  $scope.verb = function() {
-    if(record.$isNew()) {
-      return $scope.saved ? "Created" : "Create"
-    } else {
-      return $scope.saved ? "Up to date" : "Update"
-    }
-  }
+
   $scope.undo = function() {
-    $scope.saved = false
     if(record.commands < 1) return;
-    $scope.undone.push(record.commands.pop());
+    state.synced = false
+    state.undone.push(record.commands.pop());
+    needsSync();
   };
+
   $scope.redo = function() {
-    $scope.saved = false
-    if($scope.undone.length < 1) return;
-    record.commands.push($scope.undone.pop());
+    if(state.undone.length < 1) return;
+    state.synced = false
+    record.commands.push(state.undone.pop());
+    needsSync();
   };
-  $scope.save = function() {
+
+  $scope.save = sync;
+
+  function sync() {
     var verb = record.$isNew() ? "create" : "save"
-    record["$" + verb]().catch(_.partial(errors,"There was a problem saving your drawing!"))
+    record["$" + verb]()
+    .then(function() {
+      state.synced = true;
+    })
+    .catch(function(error) {
+      state.synced = true;
+      errors("There was a problem saving your drawing!");
+    });
   };
+
+  function needsSync() {
+    state.synced = false;
+    sync();
+  }
 
 });
 
