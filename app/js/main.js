@@ -13,42 +13,42 @@ app.controller("drawingCreateCtrl",
   };
   var state = $scope.state;
 
-  var record = $scope.record = new DrawingRecord();
+  var drawing = $scope.drawing = new DrawingRecord();
   if($routeParams.id != null) {
-    record._id = $routeParams.id;
-    record.$get();
+    drawing._id = $routeParams.id;
+    drawing.$get();
   } else {
-    record.commands = [];
+    drawing.commands = [];
   }
 
   $scope.newStroke = function(command) {
     state.synced = false
     state.undone = [];
-    record.commands.push(_.defaults({
+    drawing.commands.push(_.defaults({
       type: "path"
     },command))
     needsSync();
   };
 
   $scope.undo = function() {
-    if(record.commands < 1) return;
+    if(drawing.commands < 1) return;
     state.synced = false
-    state.undone.push(record.commands.pop());
+    state.undone.push(drawing.commands.pop());
     needsSync();
   };
 
   $scope.redo = function() {
     if(state.undone.length < 1) return;
     state.synced = false
-    record.commands.push(state.undone.pop());
+    drawing.commands.push(state.undone.pop());
     needsSync();
   };
 
   $scope.save = sync;
 
   function sync() {
-    var verb = record.$isNew() ? "create" : "save"
-    record["$" + verb]()
+    var verb = drawing.$isNew() ? "create" : "save"
+    drawing["$" + verb]()
     .then(function() {
       state.synced = true;
     })

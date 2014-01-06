@@ -33,12 +33,15 @@
         </script>
         <script id='tpls/drawings_new.html' type="text/ng-template">
           <a href="#">Back</a>
+
+          <h1 toggle-input=drawing.name>{{drawing.name || 'Untitled drawing'}}</h1>
+
           <div class=canvases ng-class="{loading:loading}">
-            <canvas drawing commands=record.commands width=320 height=400></canvas>
+            <canvas drawing commands=drawing.commands width=320 height=400></canvas>
             <canvas draw onpath=newStroke(command) width=320 height=400></canvas>
           </div>
 
-          <button ng-click=undo() ng-disabled="record.commands.length == 0">Undo</button>
+          <button ng-click=undo() ng-disabled="drawing.commands.length == 0">Undo</button>
           <button ng-click=redo() ng-disabled="state.undone.length == 0">Redo</button>
           <p ng-hide=state.synced>Saving your work...</p>
         </script>
