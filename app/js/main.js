@@ -44,7 +44,17 @@ app.controller("drawingCreateCtrl",
     needsSync();
   };
 
+  $scope.$watch("drawing.name",function(newName,oldName) {
+    if(newName === oldName) return; // watch was being initialized
+    inputSync();
+  });
+
   $scope.save = sync;
+
+  // we don't want to save every time a character
+  // is changed on the name, so use debounce to save
+  // only after name stops changing
+  var inputSync = _.debounce(needsSync,1000);
 
   function sync() {
     var verb = drawing.$isNew() ? "create" : "save"
