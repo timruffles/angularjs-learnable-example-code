@@ -7,8 +7,8 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link href="foundation/css/normalize.css" rel="stylesheet">
-        <link href="foundation/css/foundation.css" rel="stylesheet">
+        <link href="vendor/foundation/css/normalize.css" rel="stylesheet">
+        <link href="vendor/foundation/css/foundation.css" rel="stylesheet">
 
         <link href="css/app.css" rel="stylesheet">
         
@@ -66,20 +66,20 @@
         </script>
 
         <!-- Fake backend -->
-        <script src="js/support/sinon.js"></script>
-        <script src="js/support/fake-server.js"></script>
+        <script src="vendor/support/sinon.js"></script>
+        <script src="vendor/support/fake-server.js"></script>
         <script>
           createFakeServer();
         </script>
 
         <!-- general libraries -->
-        <script src="js/vendor/underscore.js"></script>
-        <script src="js/vendor/jquery.js"></script> <!-- jQuery before angular so angular can augment element with it -->
+        <script src="vendor/underscore.js"></script>
+        <script src="vendor/jquery.js"></script> <!-- jQuery before angular so angular can augment element with it -->
 
         <!-- angular + modules -->
-        <script src="js/vendor/angular/angular.js"></script>
-        <script src="js/vendor/angular/angular-route.js"></script>
-        <script src="js/vendor/angular/angular-resource.js"></script>
+        <script src="vendor/angular/angular.js"></script>
+        <script src="vendor/angular/angular-route.js"></script>
+        <script src="vendor/angular/angular-resource.js"></script>
 
         <!-- our app code - angular's module system isn't a module loader, so order is important -->
         <script src="js/toggle_input.js"></script>
