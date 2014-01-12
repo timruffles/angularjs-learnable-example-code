@@ -1,16 +1,20 @@
 function createFakeServer() {
-  var xhr = sinon.useFakeXMLHttpRequest();
-  xhr.onCreate = console.log.bind(console);
+
   var server = sinon.fakeServer.create();
 
+  var o = server.processRequest;
+  server.processRequest = function(xhr) {
+    console.log("%s %s",xhr.method,xhr.url,xhr);
+    return o.apply(server,arguments);
+  };
   var drawings = new Storage(localStorage);
 
 
   server.respondWith("GET",  new RegExp('/api/drawings'),all);
-  server.respondWith("GET",  new RegExp('/api/drawings/(\d+)'),get);
+  server.respondWith("GET",  new RegExp('/api/drawings/(\\d+)'),get);
   server.respondWith("POST", new RegExp('/api/drawings'),create);
-  server.respondWith("POST", new RegExp('/api/drawings/(\d+)'),update);
-  server.respondWith("DELETE", new RegExp('/api/drawing'),remove);
+  server.respondWith("POST", new RegExp('/api/drawings/(\\d+)'),update);
+  server.respondWith("DELETE", new RegExp('/api/drawings/(\\d+)'),remove);
 
   server.autoRespond = true;
   server.autoRespondAfter = 850;
@@ -31,11 +35,11 @@ function createFakeServer() {
     var img = drawing.get(id);
     if(!img) xhr.respond(404);
     drawing.update(JSON.parse(xhr.requestBody));
-    xhr.respond(200,{},{});
+    xhr.respond(200,{},"{}");
   }
-  function remove(xhr,drawing) {
-    var resp = drawing.remove(drawing.id) ? 200 : 404;
-    xhr.respond(resp,{},{});
+  function remove(xhr,id) {
+    var resp = drawings.remove(id) ? 200 : 404;
+    xhr.respond(resp,{},"{}");
   }
 }
 

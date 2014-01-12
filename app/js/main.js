@@ -106,11 +106,7 @@ app.controller("drawingListItem",function($scope) {
 });
 
 app.factory("DrawingRecord",function($resource) {
-  var Drawing = $resource("/api/drawing/:id",{id: '@_id'},{
-    'query':  {method:'GET', isArray:true, url: "/api/drawings"},
-    'create':  {method:'POST', url: "/api/drawings"},
-  });
-  Drawing.prototype.$isNew = function() { return this._id == null };
+  var Drawing = $resource("/api/drawings/:id",{id: '@id'});
   return Drawing;
 });
 

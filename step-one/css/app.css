@@ -1,0 +1,16 @@
+.canvases {
+  position: relative;
+}
+.canvases {
+  width: 320px;
+  height: 400px;
+}
+.canvases canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.off {
+  display: none;
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!-- ng-app is the directive that boots up AngularJS. Pass
+  it the module name which contains the initial part of your application -->
+<html ng-app=littleSketcher>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Little Sketcher</title>
+        <meta name="description" content="">
+
+        <link href="vendor/foundation/css/normalize.css" rel="stylesheet">
+        <link href="vendor/foundation/css/foundation.css" rel="stylesheet">
+        <link href="css/app.css" rel="stylesheet">
+
+    </head>
+    <body>
+
+        <!-- ng-controller specifies the controller for a scope -->
+        <div ng-controller=helloCtrl>
+          <!-- the {{ EXPRESSION }} syntax allows us to interpolate
+            live content into our HTML. ng-bind lets us do the same thing for the whol content of an element -->
+          <h1>{{ app.message }}</h1>
+          <!-- ng-model sets up a 2-way binding between the value of an
+            input and the value of the property it's bound to -->
+          <input ng-model=app.message>
+        </div>
+
+        <script src="vendor/angular/angular.js"></script>
+        <script src="js/main.js"></script>
+
+    </body>
+</html>
