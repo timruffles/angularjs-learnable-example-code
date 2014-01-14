@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html ng-app=littleSketcher>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Little Sketcher</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href="vendor/foundation/css/normalize.css" rel="stylesheet">
+        <link href="vendor/foundation/css/foundation.css" rel="stylesheet">
+
+        <link href="css/app.css" rel="stylesheet">
+
+        <script type="text/ng-template" id="tpl/index.html">
+          <h1>Hello from index</h1>
+          <a href="#drawings/new">Create drawing</a>
+          <a href="#drawings">List drawings</a>
+        </script>
+        <script type="text/ng-template" id="tpl/drawings.html">      
+          <div class=row>
+            <h1>Drawings</h1>
+            <a href="#">Home</a>
+            
+             <button ng-click="addDrawing()">Add drawing</button>
+
+             <ul class=drawings>
+               <li class=note ng-show="drawings.length === 0">
+                 No drawings yet, get drawing!
+               </li>
+               <li ng-repeat="drawing in drawings" class=drawing>
+                 <span>{{ drawing.name }}</span><button ng-click="remove(drawing)">Remove</button>
+               </li>
+             </ul>
+           </div>
+        </script>
+        <script type="text/ng-template" id="tpl/drawings_create.html">      
+          <div class=row>
+            <h1 toggle-input="drawing.name">
+              {{ drawing.name }}
+            </h1>
+            <a href="#">Home</a>
+           </div>
+        </script>
+    </head>
+    <body>
+      
+       <div ng-view>
+         
+       </div>
+
+
+        <!-- Fake backend -->
+        <script src="vendor/support/sinon.js"></script>
+        <script src="vendor/support/fake-server.js"></script>
+        <script>
+          createFakeServer();
+        </script>
+
+        <!-- general libraries -->
+        <script src="vendor/underscore.js"></script>
+        <script src="vendor/jquery.js"></script> <!-- jQuery before angular so angular can augment element with it -->
+
+        <!-- angular + modules -->
+        <script src="vendor/angular/angular.js"></script>
+        <script src="vendor/angular/angular-route.js"></script>
+        <script src="vendor/angular/angular-resource.js"></script>
+
+        <!-- our app code - angular's module system isn't a module loader, so order is important -->
+        <script src="js/main.js"></script>
+
+
+    </body>
+</html>
