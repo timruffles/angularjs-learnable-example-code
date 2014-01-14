@@ -90,7 +90,7 @@ app.controller("drawingCreateCtrl",
 
 });
 
-app.controller("drawingsCtrl",function($scope,DrawingRecord) {
+app.controller("drawingsCtrl",function($scope,DrawingRecord,errors) {
 
   $scope.drawings = DrawingRecord.query();
   $scope.deleteDrawing = function(drawing) {
@@ -100,24 +100,44 @@ app.controller("drawingsCtrl",function($scope,DrawingRecord) {
         _.spliceOut($scope.drawings,drawing)
       })
       .catch(function() {
-        $scope.$emit("notify:error","Drawing could not be deleted");
+        errors("Drawing could not be deleted");
       });
   };
 });
 
-app.controller("drawingListItem",function($scope) {
+app.controller("drawingListItem",function($scope,errors) {
 
-  $scope.$watch("drawing.name",$scope.updateDrawing);
 
-  $scope.updateDrawing = function(drawing) {
-    $scope.drawing.$update()
+  $scope.updateDrawing = _.debounce(function(name,old) {
+    if(name === old) return;
+    $scope.drawing.$save()
       .then(function() {
         $scope.$emit("notify:completed","Drawing updated");
       })
       .catch(function() {
-        $scope.$emit("notify:error","Drawing could not be updated");
+        errors("Drawing could not be updated");
       });
-  };
+  },1000);
+
+  $scope.$watch("drawing.name",$scope.updateDrawing);
+});
+
+app.directive("notifications",function($rootScope,$timeout) {
+  return {
+    replace: true,
+    template: [
+      "<div class='alert-box notification-content' ng-show='event.message'>{{ event.message }}</div>"
+    ].join(""),
+    link: function(scope,el,attrs) {
+      $rootScope.$on("notify:completed",function(event,msg) {
+        scope.event.message = msg;
+        $timeout(function() {
+          scope.event.message = false;
+        },1800);
+      });
+      scope.event = {message: false};
+    }
+  }
 });
 
 app.factory("DrawingRecord",function($resource) {
