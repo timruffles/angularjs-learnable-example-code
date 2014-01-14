@@ -105,22 +105,28 @@ app.controller("drawingsCtrl",function($scope,DrawingRecord,errors) {
   };
 });
 
+
+
+
 app.controller("drawingListItem",function($scope,errors) {
 
 
   $scope.updateDrawing = _.debounce(function(name,old) {
+    
     if(name === old) return;
     $scope.drawing.$save()
       .then(function() {
-        $scope.$emit("notify:completed","Drawing updated");
+        $scope.$emit("notify","Drawing updated");
       })
       .catch(function() {
         errors("Drawing could not be updated");
       });
+      
   },1000);
 
   $scope.$watch("drawing.name",$scope.updateDrawing);
 });
+
 
 app.directive("notifications",function($rootScope,$timeout) {
   return {
@@ -129,17 +135,23 @@ app.directive("notifications",function($rootScope,$timeout) {
       "<div class='alert-box notification-content' ng-show='notification.visible'>{{ notification.message }}</div>"
     ].join(""),
     link: function(scope,el,attrs) {
-      $rootScope.$on("notify:completed",function(event,msg) {
+      scope.notification = {message: false, visible: false};
+      $rootScope.$on("notify",function(event,message) {
+        scope.notification.message = message;
         scope.notification.visible = true;
-        scope.notification.message = msg;
         $timeout(function() {
           scope.notification.visible = false;
-        },1800);
+        },1500);
       });
-      scope.notification = {message: false, visible: false};
     }
   }
 });
+
+
+
+
+
+
 
 app.factory("DrawingRecord",function($resource) {
   var Drawing = $resource("/api/drawings/:id",{id: '@id'});

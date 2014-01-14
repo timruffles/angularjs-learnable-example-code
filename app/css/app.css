@@ -24,17 +24,20 @@ header {
   height: 2em;
 }
 
+/* notification-content */
+
 .notification-content {
   opacity: 1;
-  -webkit-transition: all .4s;
-  transition: all .4s;
   height: 2.5em;
+  transition: all 0.5s;
 }
 
 .notification-content.ng-hide-add,
 .notification-content.ng-hide-remove {
-  display:block!important;
+  display: block!important;
 }
+
 .notification-content.ng-hide {
-  opacity:0;
+  opacity: 0;
 }
+
