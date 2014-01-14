@@ -10,9 +10,9 @@ function createFakeServer() {
   var drawings = new Storage(localStorage);
 
 
-  server.respondWith("GET",  new RegExp('/api/drawings'),all);
+  server.respondWith("GET",  new RegExp('/api/drawings$'),all);
   server.respondWith("GET",  new RegExp('/api/drawings/(\\d+)'),get);
-  server.respondWith("POST", new RegExp('/api/drawings'),create);
+  server.respondWith("POST", new RegExp('/api/drawings$'),create);
   server.respondWith("POST", new RegExp('/api/drawings/(\\d+)'),update);
   server.respondWith("DELETE", new RegExp('/api/drawings/(\\d+)'),remove);
 
@@ -21,25 +21,30 @@ function createFakeServer() {
 
   function all(xhr) {
     xhr.respond(200,{},drawings.all());
+    return true;
   }
   function get(xhr,id) {
     var img = drawings.get(id);
     if(!img) xhr.respond(404);
     xhr.respond(200,{},img);
+    return true;
   }
   function create(xhr) {
     var jsonDrawing = drawings.create(JSON.parse(xhr.requestBody));
     xhr.respond(200,{},jsonDrawing);
+    return true;
   }
   function update(xhr,id) {
-    var img = drawing.get(id);
+    var img = drawings.get(id);
     if(!img) xhr.respond(404);
-    drawing.update(JSON.parse(xhr.requestBody));
-    xhr.respond(200,{},"{}");
+    var saved = drawings.update(JSON.parse(xhr.requestBody));
+    xhr.respond(200,{},saved);
+    return true;
   }
   function remove(xhr,id) {
     var resp = drawings.remove(id) ? 200 : 404;
     xhr.respond(resp,{},"{}");
+    return true;
   }
 }
 
@@ -61,18 +66,18 @@ Storage.prototype = {
     return this.ls.id = next;
   },
   get: function(id) {
-    return this.ls["drawing-" + v.id];
+    return this.ls["drawing-" + id];
   },
   create: function(v) {
     v.id = this.nextId();
     return this.ls["drawing-" + v.id] = JSON.stringify(v);
   },
   update: function(u) {
-    var img = this.get(u.id)
+    var img = JSON.parse(this.get(u.id))
     for(var p in u) {
       img[p] = u[p]
     }
-    this.ls["drawing-" + u.id] = JSON.stringify(img);
+    return this.ls["drawing-" + u.id] = JSON.stringify(img);
   },
   remove: function(id) {
     if(!this.ls["drawing-" + id]) return false;
