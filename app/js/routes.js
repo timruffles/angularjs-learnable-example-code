@@ -13,7 +13,8 @@ app.config(function($routeProvider) {
     })
     .when("/drawings/new",{
       templateUrl: "tpls/drawings_new.html",
-      controller: "drawingCreateCtrl"
+      controller: "drawingCreateCtrl",
+      reloadOnSearch: false
     })
     .when("/drawings/:id",{
       templateUrl: "tpls/drawings_new.html",

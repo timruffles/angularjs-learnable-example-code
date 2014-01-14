@@ -32,34 +32,36 @@
           <p><a href='#drawings' class=button>List drawings</a></p>
         </script>
         <script id='tpls/drawings_new.html' type="text/ng-template">
+
+          <h1 toggle-input=drawing.name>{{state.loading ? "Loading..." : drawing.name || 'Untitled drawing'}}</h1>
           <a href="#">Back</a>
+          
+          <div class=loader ng-show=state.loading>Loading...</div>
 
-          <h1 toggle-input=drawing.name>{{drawing.name || 'Untitled drawing'}}</h1>
+          <div ng-hide=state.loading>
 
-          <div class=canvases ng-class="{loading:loading}">
-            <canvas drawing commands=drawing.commands width=320 height=400></canvas>
-            <canvas draw onpath=newStroke(command) width=320 height=400></canvas>
+            <div class=canvases ng-class="{loading:loading}">
+              <canvas drawing commands=drawing.commands width=320 height=400></canvas>
+              <canvas draw onpath=newStroke(command) width=320 height=400></canvas>
+            </div>
+
+            <button ng-click=undo() ng-disabled="drawing.commands.length == 0">Undo</button>
+            <button ng-click=redo() ng-disabled="state.undone.length == 0">Redo</button>
+            <p ng-hide=state.synced>Saving your work...</p>
           </div>
-
-          <button ng-click=undo() ng-disabled="drawing.commands.length == 0">Undo</button>
-          <button ng-click=redo() ng-disabled="state.undone.length == 0">Redo</button>
-          <p ng-hide=state.synced>Saving your work...</p>
         </script>
         <script id='tpls/drawings_list.html' type="text/ng-template">
-          <a href="#">Back</a>
-          <a class="button small drawing_create" href='#drawings/new'>New Drawing</a>
+          <h1>Drawings</h1>
+          <p><a href="#">Back</a></p>
+          <p><a class="button small drawing_create" href='#drawings/new'>New Drawing</a></p>
+          <p class=loader ng-hide=drawings.$resolved>Loading...</p>
           <ul class=drawings>
-            <li class=note ng-show='drawings.length == 0'>
+            <li class=note ng-show='drawings.length == 0 && drawings.$resolved'>
               No drawings yet, get drawing!
             </li>
             <li class=drawing ng-repeat="drawing in drawings" ng-controller=drawingListItem>
-              <div toggle-input>
-                <form>
-                  <input toggled-input ng-model=drawing.name placeholder="Unamed drawing">
-                </form>
-                <span toggle-trigger class=name ng-bind="drawing.name || 'Unamed drawing'"></span>
-              </div>
-              <a ng-href="#drawings/{{drawing._id}}" class="small button">Edit</a>
+              <span toggle-input='drawing.name' class=name>{{drawing.name || 'Unamed drawing'}}</span>
+              <a ng-href="#drawings/{{drawing.id}}" class="small button">Edit</a>
               <a ng-click="deleteDrawing(drawing)" class="small button alert">Delete</a>
             </li>
           </ul>

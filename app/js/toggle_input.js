@@ -7,7 +7,8 @@
       scope: {
         toEdit: "=toggleInput"
       },
-      transclude: true,
+      transclude: "element",
+      replace: true,
       template: [
         "<div class=toggle-wrap>",
         "  <div class=toggled-content ng-transclude ng-hide=editing></div>",

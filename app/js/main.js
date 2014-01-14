@@ -5,20 +5,28 @@ app.controller("rootCtrl",function($scope,$rootScope) {
 
 
 app.controller("drawingCreateCtrl",
-  function($scope,$rootScope,DrawingRecord,$routeParams,errors) {
+  function($scope,$rootScope,DrawingRecord,$routeParams,errors,$location) {
 
   $scope.state = {
     undone: [],
-    synced: true
+    synced: true,
+    loading: false
   };
   var state = $scope.state;
+  var idNeedsUpdate = false;
 
   var drawing = $scope.drawing = new DrawingRecord();
-  if($routeParams.id != null) {
-    drawing._id = $routeParams.id;
-    drawing.$get();
-  } else {
+  if($routeParams.id == null) {
     drawing.commands = [];
+    idNeedsUpdate = true;
+    watchName();
+  } else {
+    drawing.id = $routeParams.id;
+    drawing.$get().then(function() {
+      state.loading = false;
+      watchName();
+    });
+    state.loading = true;
   }
 
   $scope.newStroke = function(command) {
@@ -44,10 +52,6 @@ app.controller("drawingCreateCtrl",
     needsSync();
   };
 
-  $scope.$watch("drawing.name",function(newName,oldName) {
-    if(newName === oldName) return; // watch was being initialized
-    inputSync();
-  });
 
   $scope.save = sync;
 
@@ -57,13 +61,17 @@ app.controller("drawingCreateCtrl",
   var inputSync = _.debounce(needsSync,1000);
 
   function sync() {
-    var verb = drawing.$isNew() ? "create" : "save"
-    drawing["$" + verb]()
+    drawing.$save()
     .then(function() {
       state.synced = true;
+      if(idNeedsUpdate) {
+        $location.search("id",drawing.id);
+        idNeedsUpdate = false;
+      }
     })
     .catch(function(error) {
       state.synced = true;
+      console.error(error);
       errors("There was a problem saving your drawing!");
     });
   };
@@ -71,6 +79,13 @@ app.controller("drawingCreateCtrl",
   function needsSync() {
     state.synced = false;
     sync();
+  }
+
+  function watchName() {
+    $scope.$watch("drawing.name",function(newName,oldName) {
+      if(newName === oldName) return; // watch was being initialized
+      inputSync();
+    });
   }
 
 });
@@ -107,6 +122,9 @@ app.controller("drawingListItem",function($scope) {
 
 app.factory("DrawingRecord",function($resource) {
   var Drawing = $resource("/api/drawings/:id",{id: '@id'});
+  Drawing.prototype.isNew = function() {
+    return !!this.id;
+  };
   return Drawing;
 });
 
