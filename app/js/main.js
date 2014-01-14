@@ -1,4 +1,4 @@
-var app = angular.module("littleSketcher",["ngRoute","ngResource","toggleInput"]);
+var app = angular.module("littleSketcher",["ngRoute","ngResource","ngAnimate","toggleInput"]);
 
 app.controller("rootCtrl",function($scope,$rootScope) {
 });
@@ -126,16 +126,17 @@ app.directive("notifications",function($rootScope,$timeout) {
   return {
     replace: true,
     template: [
-      "<div class='alert-box notification-content' ng-show='event.message'>{{ event.message }}</div>"
+      "<div class='alert-box notification-content' ng-show='notification.visible'>{{ notification.message }}</div>"
     ].join(""),
     link: function(scope,el,attrs) {
       $rootScope.$on("notify:completed",function(event,msg) {
-        scope.event.message = msg;
+        scope.notification.visible = true;
+        scope.notification.message = msg;
         $timeout(function() {
-          scope.event.message = false;
+          scope.notification.visible = false;
         },1800);
       });
-      scope.event = {message: false};
+      scope.notification = {message: false, visible: false};
     }
   }
 });

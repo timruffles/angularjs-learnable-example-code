@@ -23,3 +23,18 @@
 header {
   height: 2em;
 }
+
+.notification-content {
+  opacity: 1;
+  -webkit-transition: all .4s;
+  transition: all .4s;
+  height: 2.5em;
+}
+
+.notification-content.ng-hide-add,
+.notification-content.ng-hide-remove {
+  display:block!important;
+}
+.notification-content.ng-hide {
+  opacity:0;
+}
